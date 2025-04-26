@@ -27,7 +27,7 @@ def main():
         "-e", "__NV_PRIME_RENDER_OFFLOAD=1",
         "-e", "__GLX_VENDOR_LIBRARY_NAME=nvidia",
         "-v", "/tmp/.X11-unix:/tmp/.X11-unix",
-        "-v", f"{ws_path}:/root/ws",
+        "-v", f"{ws_path}:/home/ubuntu/ws",
         image,
         "/bin/bash"
     ]

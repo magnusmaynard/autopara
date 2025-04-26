@@ -16,7 +16,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     tmux
 
-ENV ROS_WS=/root/ws
+ENV ROS_WS=/home/${USERNAME}/ws
 RUN mkdir -p ${ROS_WS}/src
 
 SHELL ["/bin/bash", "-c"]
