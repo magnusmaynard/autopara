@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-
 import os
 import sys
 import subprocess
 from pathlib import Path
 
-
 def main():
+    subprocess.run(["xhost", "+local:"], check=True)
     image = "autopara:latest"
     network_mode = "host"
+    container_name = "autopara-dev"
     ws_path = os.path.expanduser(f"{Path.home()}/github/autopara/ws")
     
     if not os.path.exists(ws_path):
@@ -17,21 +17,20 @@ def main():
     
     docker_cmd = [
         "docker", "run", "-it", "--rm",
-        "--network", network_mode,
-        "-e", "DISPLAY",
+        "--name", container_name,
+        "--hostname", "autopara-dev",
+        "--gpus", "all",
+        "--runtime=nvidia",
+        "-e", "NVIDIA_VISIBLE_DEVICES=all",
+        "-e", "NVIDIA_DRIVER_CAPABILITIES=all",
+        "-e", f"DISPLAY={os.environ['DISPLAY']}",
+        "-e", "__NV_PRIME_RENDER_OFFLOAD=1",
+        "-e", "__GLX_VENDOR_LIBRARY_NAME=nvidia",
         "-v", "/tmp/.X11-unix:/tmp/.X11-unix",
-        "-e", "XAUTHORITY=/tmp/.Xauthority",
-        "-v", f"{os.environ.get('XAUTHORITY', os.path.expanduser('~/.Xauthority'))}:/tmp/.Xauthority:ro",
-        "-e", "QT_X11_NO_MITSHM=1",
-        "-v", "/run/user/$(id -u)/pulse:/run/user/1000/pulse",
-        "-e", "PULSE_SERVER=unix:/run/user/1000/pulse/native",
         "-v", f"{ws_path}:/root/ws",
         image,
         "/bin/bash"
     ]
-    
-    print("Starting ROS2 Docker container with GUI support...")
-    print(" ".join(docker_cmd))
     
     try:
         subprocess.run(docker_cmd)
@@ -43,11 +42,5 @@ def main():
     
     return 0
 
-
 if __name__ == "__main__":
-    try:
-        subprocess.run(["xhost", "+local:"], check=True)
-    except subprocess.CalledProcessError:
-        print("Warning: Could not set xhost permissions. GUI might not work.")
-    
     sys.exit(main())
