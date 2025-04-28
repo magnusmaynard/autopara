@@ -1,0 +1,167 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="paper_glider">
+    <pose>0 0 50 0 0.15 0</pose> <!-- Starting position with slight downward pitch (0.15 rad) -->
+    
+    <link name="fuselage">
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <mass>0.05</mass> <!-- Much lighter, like paper -->
+        <inertia>
+          <ixx>0.001</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.005</iyy>
+          <iyz>0</iyz>
+          <izz>0.005</izz>
+        </inertia>
+      </inertial>
+      
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.3 0.05 0.01</size> <!-- Thinner like folded paper -->
+          </box>
+        </geometry>
+      </collision>
+      
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.3 0.05 0.01</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.9 0.9 0.9 1</ambient>
+          <diffuse>0.9 0.9 0.9 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <link name="left_wing">
+      <pose>0 0.2 0 0 0 0</pose> <!-- Slight dihedral angle (0.1 rad) -->
+      <inertial>
+        <mass>0.02</mass> <!-- Very light -->
+        <inertia>
+          <ixx>0.0001</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.001</iyy>
+          <iyz>0</iyz>
+          <izz>0.001</izz>
+        </inertia>
+      </inertial>
+      
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.3 0.3 0.005</size> <!-- Thin like paper -->
+          </box>
+        </geometry>
+      </collision>
+      
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.3 0.3 0.005</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.9 0.9 0.9 1</ambient>
+          <diffuse>0.9 0.9 0.9 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <link name="right_wing">
+      <pose>0 -0.2 0 0 0 0</pose> <!-- Slight dihedral angle (0.1 rad) -->
+      <inertial>
+        <mass>0.02</mass> <!-- Very light -->
+        <inertia>
+          <ixx>0.0001</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.001</iyy>
+          <iyz>0</iyz>
+          <izz>0.001</izz>
+        </inertia>
+      </inertial>
+      
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.3 0.3 0.005</size> <!-- Thin like paper -->
+          </box>
+        </geometry>
+      </collision>
+      
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.3 0.3 0.005</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.9 0.9 0.9 1</ambient>
+          <diffuse>0.9 0.9 0.9 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <!-- Fixed joints connecting wings to fuselage -->
+    <joint name="left_wing_joint" type="fixed">
+      <parent>fuselage</parent>
+      <child>left_wing</child>
+    </joint>
+
+    <joint name="right_wing_joint" type="fixed">
+      <parent>fuselage</parent>
+      <child>right_wing</child>
+    </joint>
+
+    <!-- LiftDrag Plugin for Left Wing - Using Gazebo Ignition plugin format -->
+    <plugin
+      filename="gz-sim-lift-drag-system"
+      name="gz::sim::systems::LiftDrag">
+      <link_name>left_wing</link_name>
+      <air_density>1.2041</air_density>
+      <area>0.09</area> <!-- 0.3m x 0.3m -->
+      <forward>1 0 0</forward>
+      <upward>0 0 1</upward>
+      <cp>0 0 0</cp>
+      <!-- Lift and drag coefficients for paper airfoil -->
+      <a0>0.0</a0>
+      <cla>3.0</cla> <!-- Slightly less lift than before -->
+      <cda>0.08</cda> <!-- Slightly less drag -->
+      <cma>0.0</cma>
+      <alpha_stall>0.3</alpha_stall>
+      <cla_stall>-0.2</cla_stall>
+      <cda_stall>1.5</cda_stall>
+      <cma_stall>0.0</cma_stall>
+    </plugin>
+
+    <!-- LiftDrag Plugin for Right Wing - Using Gazebo Ignition plugin format -->
+    <plugin
+      filename="gz-sim-lift-drag-system"
+      name="gz::sim::systems::LiftDrag">
+      <link_name>right_wing</link_name>
+      <air_density>1.2041</air_density>
+      <area>0.09</area> <!-- 0.3m x 0.3m -->
+      <forward>1 0 0</forward>
+      <upward>0 0 1</upward>
+      <cp>0 0 0</cp>
+      <!-- Same lift and drag coefficients as left wing -->
+      <a0>0.0</a0>
+      <cla>3.0</cla>
+      <cda>0.08</cda>
+      <cma>0.0</cma>
+      <alpha_stall>0.3</alpha_stall>
+      <cla_stall>-0.2</cla_stall>
+      <cda_stall>1.5</cda_stall>
+      <cma_stall>0.0</cma_stall>
+    </plugin>
+  </model>
+</sdf>
